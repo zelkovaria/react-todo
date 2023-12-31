@@ -1,9 +1,8 @@
-import logo from "./logo.svg";
 import "./App.css";
 import TodoTemplate from "./components/TodoTemplate";
 import TodoInsert from "./components/TodoInsert";
 import TodoList from "./components/TodoList";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 const App = () => {
   const [todos, setTodos] = useState([
@@ -23,9 +22,24 @@ const App = () => {
       checked: false,
     },
   ]);
+
+  const nextId = useRef(4);
+
+  const onInsert = useCallback(
+    (text) => {
+      const todo = {
+        id: nextId.current,
+        text,
+        checked: false,
+      };
+      setTodos(todos.concat(todo));
+      nextId.current += 1;
+    },
+    [todos]
+  );
   return (
     <TodoTemplate>
-      <TodoInsert />
+      <TodoInsert onInsert={onInsert} />
       <TodoList todos={todos} />
     </TodoTemplate>
   );
